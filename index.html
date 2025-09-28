@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape from Planet Xylos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            background-image: radial-gradient(circle at top right, #16213e 20%, #0f3460 60%, #1a1a2e 100%);
+            background-attachment: fixed;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem; /* Increased rounding */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .btn {
+            @apply px-6 py-3 rounded-lg font-bold text-white transition-all duration-300 shadow-lg;
+        }
+        .btn-primary {
+            @apply bg-blue-600 hover:bg-blue-500 ring-2 ring-blue-500/50 hover:ring-blue-400/50;
+        }
+        .btn-secondary {
+            @apply bg-gray-600 hover:bg-gray-500 ring-2 ring-gray-500/50 hover:ring-gray-400/50;
+        }
+        .btn-green {
+            @apply bg-green-600 hover:bg-green-500 ring-2 ring-green-500/50 hover:ring-green-400/50;
+        }
+        .input-field {
+            @apply w-full bg-gray-900/50 border border-gray-600 rounded-lg p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all;
+        }
+        .avatar {
+            @apply w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-blue-400 shadow-lg;
+        }
+        /* Custom animation for feedback */
+        @keyframes flash-green {
+            0%, 100% { box-shadow: 0 0 10px rgba(74, 222, 128, 0); }
+            50% { box-shadow: 0 0 20px rgba(74, 222, 128, 0.8); }
+        }
+        @keyframes flash-red {
+            0%, 100% { box-shadow: 0 0 10px rgba(248, 113, 113, 0); }
+            50% { box-shadow: 0 0 20px rgba(248, 113, 113, 0.8); }
+        }
+        .correct-answer {
+            animation: flash-green 1s ease-in-out;
+        }
+        .wrong-answer {
+            animation: flash-red 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="app-container" class="w-full max-w-5xl mx-auto">
+
+        <!-- Language Toggle -->
+        <div class="fixed top-4 right-4 z-50">
+            <button id="lang-toggle" class="btn btn-secondary text-sm px-4 py-2">Svenska</button>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="glass-panel p-8 md:p-12 text-center">
+            <h1 class="font-orbitron text-4xl md:text-6xl font-bold text-cyan-300 mb-4" data-en="Escape from Planet Xylos" data-sv="Flykten från Planet Xylos">Escape from Planet Xylos</h1>
+            <p class="mb-8 text-lg" data-en="Your ship has crashed. Use your physics knowledge to get back home." data-sv="Ditt skepp har kraschat. Använd dina fysikkunskaper för att komma hem.">Your ship has crashed. Use your physics knowledge to get back home.</p>
+            <div class="space-y-6 max-w-md mx-auto">
+                <div>
+                    <label for="team-name" class="block mb-2 font-bold" data-en="Team Name" data-sv="Lagets Namn">Team Name</label>
+                    <input type="text" id="team-name" class="input-field text-center" placeholder="The Quark Crusaders">
+                </div>
+                <div>
+                    <label for="mission-variant" class="block mb-2 font-bold" data-en="Select Mission Variant" data-sv="Välj Uppdragsvariant">Select Mission Variant</label>
+                    <select id="mission-variant" class="input-field">
+                        <option value="alpha">Alpha</option>
+                        <option value="beta">Beta</option>
+                        <option value="gamma">Gamma</option>
+                    </select>
+                </div>
+                <button id="start-btn" class="btn btn-primary w-full text-xl" data-en="Begin Mission" data-sv="Påbörja Uppdrag">Begin Mission</button>
+            </div>
+        </div>
+
+        <!-- Station Screen -->
+        <div id="station-screen" class="hidden">
+            <header class="flex justify-between items-center mb-4">
+                <div>
+                    <h2 id="station-title" class="font-orbitron text-2xl md:text-3xl text-cyan-300"></h2>
+                    <p id="team-name-display" class="text-sm text-gray-400"></p>
+                </div>
+                <div id="timer" class="font-orbitron text-2xl">00:00</div>
+            </header>
+
+            <div class="glass-panel grid grid-cols-1 md:grid-cols-2 gap-8 p-8 items-center">
+                <div class="md:pr-8">
+                    <img id="station-image" src="" alt="Scene from the escape room" class="w-full h-auto rounded-xl shadow-2xl border-2 border-blue-900/50">
+                    <div class="flex justify-center space-x-4 mt-6">
+                        <img src="https://i.postimg.cc/L822r7B7/avatar1.png" alt="Avatar 1" class="avatar">
+                        <img src="https://i.postimg.cc/Pry5pG1z/avatar2.png" alt="Avatar 2" class="avatar">
+                        <img src="https://i.postimg.cc/50tZ7qg4/avatar3.png" alt="Avatar 3" class="avatar">
+                        <img src="https://i.postimg.cc/NMLbQnSj/avatar4.png" alt="Avatar 4" class="avatar">
+                    </div>
+                </div>
+                <div>
+                    <p id="station-story" class="mb-6 leading-relaxed"></p>
+                    <div id="station-challenge">
+                        <label id="challenge-label" for="answer-input" class="block mb-2 font-bold"></label>
+                        <p id="challenge-question" class="text-gray-300 mb-4"></p>
+                        <div id="answer-inputs" class="space-y-4">
+                           <!-- JS will populate this -->
+                        </div>
+                    </div>
+                    <div id="feedback" class="mt-4 h-6 text-center font-bold"></div>
+                    <div class="flex flex-col sm:flex-row gap-4 mt-6">
+                        <button id="hint-btn" class="btn btn-secondary flex-1" data-en="Show Hint" data-sv="Visa Tips">Show Hint</button>
+                        <button id="submit-btn" class="btn btn-primary flex-1" data-en="Submit Answer" data-sv="Skicka Svar">Submit Answer</button>
+                    </div>
+                    <div id="hint-box" class="mt-4 p-4 bg-gray-900/50 rounded-lg border border-gray-600 hidden">
+                        <p class="font-bold" data-en="Hint:" data-sv="Tips:">Hint:</p>
+                        <p id="hint-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Booster Screen -->
+        <div id="booster-screen" class="hidden text-center">
+             <div class="glass-panel p-8 md:p-12">
+                <h1 class="font-orbitron text-3xl md:text-5xl text-cyan-300 mb-4" data-en="Booster Round!" data-sv="Booster-runda!">Booster Round!</h1>
+                <div class="flex justify-between items-center max-w-md mx-auto mb-6 text-2xl font-orbitron">
+                    <div><span data-en="Time:" data-sv="Tid:">Time:</span> <span id="booster-timer">60</span></div>
+                    <div><span data-en="Score:" data-sv="Poäng:">Score:</span> <span id="booster-score">0</span></div>
+                </div>
+                <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-600 mb-6 min-h-[100px] flex items-center justify-center">
+                    <p id="booster-definition" class="text-lg"></p>
+                </div>
+                <div class="max-w-md mx-auto">
+                    <input type="text" id="booster-input" class="input-field text-center mb-4" placeholder-en="Type your answer here..." placeholder-sv="Skriv ditt svar här...">
+                    <div class="flex gap-4">
+                        <button id="skip-btn" class="btn btn-secondary flex-1" data-en="Skip (-5)" data-sv="Hoppa över (-5)">Skip (-5)</button>
+                        <button id="booster-submit-btn" class="btn btn-green flex-1" data-en="Submit" data-sv="Skicka">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- End Screen -->
+        <div id="end-screen" class="hidden text-center">
+             <div class="glass-panel p-8 md:p-12">
+                <h1 class="font-orbitron text-3xl md:text-5xl text-green-400 mb-4" data-en="Mission Accomplished!" data-sv="Uppdraget Slutfört!">Mission Accomplished!</h1>
+                <p class="mb-6 text-lg" data-en="You've successfully escaped Planet Xylos. Here are your results:" data-sv="Ni har framgångsrikt flytt från Planet Xylos. Här är era resultat:">You've successfully escaped Planet Xylos. Here are your results:</p>
+                <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-600 mb-6 text-left max-w-lg mx-auto space-y-2">
+                    <p><strong data-en="Team:" data-sv="Lag:">Team:</strong> <span id="final-team-name"></span></p>
+                    <p><strong data-en="Mission:" data-sv="Uppdrag:">Mission:</strong> <span id="final-mission"></span></p>
+                    <p><strong data-en="Time:" data-sv="Tid:">Time:</strong> <span id="final-time"></span></p>
+                    <p><strong data-en="Booster Score:" data-sv="Booster-poäng:">Booster Score:</strong> <span id="final-booster-score"></span></p>
+                </div>
+                <p class="mb-4" data-en="Copy the code below and send it to your teacher:" data-sv="Kopiera koden nedan och skicka den till din lärare:">Copy the code below and send it to your teacher:</p>
+                <div class="relative max-w-lg mx-auto">
+                    <textarea id="results-code" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-sm text-cyan-300 h-24" readonly></textarea>
+                    <button id="copy-btn" class="absolute top-2 right-2 btn btn-secondary px-3 py-1 text-xs" data-en="Copy" data-sv="Kopiera">Copy</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- GAME DATA ---
+        const gameData = {
+            images: {
+                station1: "https://i.postimg.cc/k47gZ7z8/scene1-crash.png",
+                station2: "https://i.postimg.cc/W3tN0YdY/scene2-depths.png",
+                station3: "https://i.postimg.cc/8zQ2XzFj/scene3-block.png",
+                station4: "https://i.postimg.cc/mkD4R2P8/scene4-pod.png",
+            },
+            variants: {
+                alpha: {
+                    g: 6, maxV: 12, liquidP: 1, liquidD: 2, maxSuitP: 250, blockM: 500, blockF: 200, blockD: 4, podM: 1500, podA: 2, earthG: 10,
+                    answers: [12, 500, [300, 800], 12000]
+                },
+                beta: {
+                    g: 8, maxV: 12, liquidP: 2, liquidD: 2, maxSuitP: 200, blockM: 600, blockF: 250, blockD: 5, podM: 2000, podA: 3, earthG: 10,
+                    answers: [9, 200, [480, 1250], 22000]
+                },
+                gamma: {
+                    g: 4, maxV: 8, liquidP: 1.5, liquidD: 3, maxSuitP: 150, blockM: 400, blockF: 150, blockD: 10, podM: 1000, podA: 1, earthG: 10,
+                    answers: [8, 300, [160, 1500], 5000]
+                }
+            },
+            stations: [
+                // Station 1
+                { en: { title: "Station 1: The Perilous Drop", story: "Your ship has crashed and is wedged precariously on the edge of a high cliff. You've found emergency jump-packs, but you must calculate the maximum height you can safely jump from to land on the ledge below without the landing velocity being too high.", question: "Your suits can withstand a maximum landing velocity of {maxV} m/s. What is the maximum height (in meters) you can fall from on this planet (g = {g} N/kg) and land safely? (Round to the nearest whole number).", hint: "First, find how long it takes to reach the max velocity using v = a * t. Then, calculate the distance fallen in that time using d = 1/2 * a * t².", label: "Max Safe Height (m)" },
+                  sv: { title: "Station 1: Den Farliga Nedstigningen", story: "Ert skepp har kraschat och sitter farligt fast på kanten av en hög klippa. Ni har hittat nöd-jetpacks, men ni måste beräkna den maximala höjden ni säkert kan hoppa från för att landa på avsatsen nedanför utan att landningshastigheten blir för hög.", question: "Era dräkter tål en maximal landningshastighet på {maxV} m/s. Vad är den maximala höjden (i meter) ni kan falla från på denna planet (g = {g} N/kg) och landa säkert? (Avrunda till närmaste heltal).", hint: "Hitta först hur lång tid det tar att nå den maximala hastigheten med v = a * t. Beräkna sedan sträckan man faller under den tiden med s = 1/2 * a * t².", label: "Max Säker Höjd (m)" } },
+                // Station 2
+                { en: { title: "Station 2: The Murky Depths", story: "You've landed safely on the ledge, which leads into a cave. The path is blocked by a subterranean lake filled with a strange, dense liquid. You must determine how deep you can safely dive to get through a tunnel at the bottom.", question: "A pressure gauge shows that at a depth of {liquidD} meters, the pressure is {liquidP} kPa. Your suits can only withstand a maximum pressure of {maxSuitP} kPa. What is the maximum depth (in meters) you can safely dive to?", hint: "How much does the pressure increase for every meter you go down? Use that to find the max depth.", label: "Max Safe Depth (m)" },
+                  sv: { title: "Station 2: Det Mörka Djupet", story: "Ni har landat säkert på klippavsatsen, som leder in i en grotta. Vägen är blockerad av en underjordisk sjö fylld med en konstig, tjock vätska. Ni måste avgöra hur djupt ni kan gå för att säkert ta er igenom en tunnel på botten.", question: "En tryckmätare visar att på {liquidD} meters djup är trycket {liquidP} kPa. Era dräkter tål bara ett maximalt tryck på {maxSuitP} kPa. Vad är det maximala djupet (i meter) ni säkert kan dyka till?", hint: "Hur mycket ökar trycket för varje meter ni sjunker? Använd det för att hitta maxdjupet.", label: "Max Säkert Djup (m)" } },
+                // Station 3
+                { en: { title: "Station 3: The Immovable Obstacle", story: "After swimming through the tunnel, you find the path to the escape pod, but it's blocked by a massive, cubical block. You must calculate how much effort it will take to push it 4 meters out of the way.", question: "The block has a mass of {blockM} kg (on a planet with g = {g} N/kg). The frictional force is {blockF} N. \n 1. What mass on Earth (g ≈ {earthG} N/kg) would have the same weight? \n 2. How much work (in Joules) will it take to move the block {blockD} meters?", hint: "1. Find weight on Xylos (W = m*g), then find mass on Earth (m = W/g). 2. Work = Force * distance. The force you need to overcome is the friction.", label: ["Equivalent Earth Mass (kg)", "Work to Move (J)"] },
+                  sv: { title: "Station 3: Det Orubbliga Hindret", story: "Efter att ha simmat genom tunneln hittar ni vägen till rymdkapseln, men den är blockerad av ett massivt, kubiskt block. Ni måste beräkna hur mycket ansträngning det krävs för att knuffa det 4 meter ur vägen.", question: "Blocket har en massa på {blockM} kg (på en planet med g = {g} N/kg). Friktionskraften är {blockF} N. \n 1. Vilken massa på jorden (g ≈ {earthG} N/kg) skulle ha samma tyngd? \n 2. Hur mycket arbete (i Joule) krävs för att flytta blocket {blockD} meter?", hint: "1. Hitta tyngden på Xylos (W = m*g), hitta sedan massan på jorden (m = W/g). 2. Arbete = Kraft * sträcka. Kraften ni måste övervinna är friktionen.", label: ["Motsvarande Jordmassa (kg)", "Arbete för att flytta (J)"] } },
+                // Station 4
+                { en: { title: "Station 4: The Final Launch", story: "You've reached the escape pod! The power is on, but you must manually calculate the minimum thrust the engine needs to lift off and accelerate upwards to reach orbit.", question: "The escape pod has a mass of {podM} kg. To escape, you need to achieve an upward acceleration of {podA} m/s². What is the total upward thrust (in Newtons) the engine must generate on this planet (g = {g} N/kg)?", hint: "Total thrust must overcome gravity (F_g = m*g) AND provide the net force for acceleration (F_net = m*a). Add them together!", label: "Required Thrust (N)" },
+                  sv: { title: "Station 4: Den Slutliga Uppskjutningen", story: "Ni har nått rymdkapseln! Strömmen är på, men ni måste manuellt beräkna den minsta dragkraft som motorn behöver för att lyfta och accelerera uppåt för att nå omloppsbana.", question: "Rymdkapseln har en massa på {podM} kg. För att fly, måste ni uppnå en uppåtriktad acceleration på {podA} m/s². Vad är den totala uppåtriktade dragkraften (i Newton) som motorn måste generera på denna planet (g = {g} N/kg)?", hint: "Total dragkraft måste övervinna gravitationen (F_g = m*g) OCH ge nettokraften för acceleration (F_netto = m*a). Addera dem!", label: "Nödvändig Dragkraft (N)" } }
+            ],
+            boosterQuestions: [
+                { en: "The tendency of an object to keep its current velocity.", sv: "Tendensen för ett föremål att behålla sin nuvarande hastighet.", a: ["inertia", "tröghet"] },
+                { en: "The amount of matter in an object.", sv: "Mängden materia i ett föremål.", a: ["mass", "massa"] },
+                { en: "A push or a pull on an object.", sv: "En knuff eller drag på ett föremål.", a: ["force", "kraft"] },
+                { en: "The force that opposes motion between surfaces.", sv: "Kraften som motverkar rörelse mellan ytor.", a: ["friction", "friktion"] },
+                { en: "The force of gravity on an object.", sv: "Tyngdkraften på ett föremål.", a: ["weight", "tyngd"] },
+                { en: "The speed in a given direction.", sv: "Hastigheten i en viss riktning.", a: ["velocity", "hastighet"] },
+                { en: "The rate of change of velocity.", sv: "Förändringstakten för hastighet.", a: ["acceleration", "acceleration"] },
+                { en: "The energy transferred when a force moves an object.", sv: "Energin som överförs när en kraft flyttar ett föremål.", a: ["work", "arbete"] },
+                { en: "The force exerted per unit area.", sv: "Kraften som utövas per ytenhet.", a: ["pressure", "tryck"] }
+            ]
+        };
+
+        // --- GAME STATE ---
+        let gameState = {
+            lang: 'en',
+            teamName: '',
+            missionVariant: 'alpha',
+            currentStation: 0,
+            startTime: null,
+            timerInterval: null,
+            answers: [],
+            boosterScore: 0,
+            boosterTimer: 60,
+            boosterInterval: null,
+            currentBoosterQ: 0
+        };
+
+        // --- DOM ELEMENTS ---
+        const screens = {
+            start: document.getElementById('start-screen'),
+            station: document.getElementById('station-screen'),
+            booster: document.getElementById('booster-screen'),
+            end: document.getElementById('end-screen'),
+        };
+        const langToggleBtn = document.getElementById('lang-toggle');
+        const startBtn = document.getElementById('start-btn');
+        const teamNameInput = document.getElementById('team-name');
+        const missionVariantSelect = document.getElementById('mission-variant');
+        const submitBtn = document.getElementById('submit-btn');
+        const hintBtn = document.getElementById('hint-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const boosterSubmitBtn = document.getElementById('booster-submit-btn');
+        const skipBtn = document.getElementById('skip-btn');
+        const boosterInput = document.getElementById('booster-input');
+
+        // --- UTILITY FUNCTIONS ---
+        function showScreen(screenId) {
+            Object.values(screens).forEach(s => s.classList.add('hidden'));
+            screens[screenId].classList.remove('hidden');
+        }
+
+        function updateUIText() {
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.textContent = el.dataset[gameState.lang];
+            });
+             document.querySelectorAll('[placeholder-en]').forEach(el => {
+                el.placeholder = el.getAttribute(`placeholder-${gameState.lang}`);
+            });
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            return `${mins}:${secs}`;
+        }
+        
+        // --- LANGUAGE TOGGLE ---
+        langToggleBtn.addEventListener('click', () => {
+            gameState.lang = gameState.lang === 'en' ? 'sv' : 'en';
+            langToggleBtn.textContent = gameState.lang === 'en' ? 'Svenska' : 'English';
+            updateUIText();
+            // Re-render current station if game is active
+            if (gameState.startTime && gameState.currentStation < gameData.stations.length) {
+                renderStation();
+            }
+        });
+
+        // --- GAME LOGIC ---
+        function startGame() {
+            gameState.teamName = teamNameInput.value.trim() || 'Anonymous';
+            gameState.missionVariant = missionVariantSelect.value;
+            gameState.startTime = Date.now();
+            
+            document.getElementById('team-name-display').textContent = `${gameState.teamName} | Mission: ${gameState.missionVariant.charAt(0).toUpperCase() + gameState.missionVariant.slice(1)}`;
+
+            gameState.timerInterval = setInterval(() => {
+                const elapsedSeconds = Math.floor((Date.now() - gameState.startTime) / 1000);
+                document.getElementById('timer').textContent = formatTime(elapsedSeconds);
+            }, 1000);
+
+            showScreen('station');
+            renderStation();
+        }
+
+        function renderStation() {
+            const station = gameData.stations[gameState.currentStation];
+            const variant = gameData.variants[gameState.missionVariant];
+            const content = station[gameState.lang];
+
+            // Interpolate values into question text
+            let questionText = content.question;
+            for (const key in variant) {
+                const regex = new RegExp(`{${key}}`, 'g');
+                questionText = questionText.replace(regex, variant[key]);
+            }
+            
+            document.getElementById('station-title').textContent = content.title;
+            document.getElementById('station-story').textContent = content.story;
+            document.getElementById('station-image').src = gameData.images[`station${gameState.currentStation + 1}`];
+            document.getElementById('challenge-question').innerText = questionText; // Use innerText to respect newlines
+            document.getElementById('hint-text').textContent = content.hint;
+            document.getElementById('hint-box').classList.add('hidden');
+            document.getElementById('feedback').textContent = '';
+
+            const answerInputsContainer = document.getElementById('answer-inputs');
+            answerInputsContainer.innerHTML = '';
+            const labels = Array.isArray(content.label) ? content.label : [content.label];
+            labels.forEach((label, i) => {
+                const inputId = `answer-input-${i}`;
+                const wrapper = document.createElement('div');
+                const labelEl = document.createElement('label');
+                labelEl.htmlFor = inputId;
+                labelEl.className = "block mb-2 font-semibold";
+                labelEl.textContent = label;
+                const inputEl = document.createElement('input');
+                inputEl.type = "number";
+                inputEl.id = inputId;
+                inputEl.className = "input-field";
+                wrapper.appendChild(labelEl);
+                wrapper.appendChild(inputEl);
+                answerInputsContainer.appendChild(wrapper);
+            });
+        }
+        
+        function checkAnswer() {
+            const correctAnswers = gameData.variants[gameState.missionVariant].answers[gameState.currentStation];
+            const userAnswers = [];
+            const inputFields = document.querySelectorAll('#answer-inputs input');
+            
+            inputFields.forEach(input => {
+                userAnswers.push(parseFloat(input.value));
+            });
+
+            const isCorrect = Array.isArray(correctAnswers)
+                ? JSON.stringify(userAnswers) === JSON.stringify(correctAnswers)
+                : userAnswers[0] === correctAnswers;
+
+            const feedbackEl = document.getElementById('feedback');
+            feedbackEl.classList.remove('correct-answer', 'wrong-answer', 'text-green-400', 'text-red-400');
+            
+            if (isCorrect) {
+                feedbackEl.textContent = gameState.lang === 'en' ? 'Correct! Proceeding to next challenge...' : 'Rätt! Fortsätter till nästa utmaning...';
+                feedbackEl.classList.add('text-green-400', 'correct-answer');
+                gameState.answers.push(userAnswers);
+                
+                setTimeout(() => {
+                    gameState.currentStation++;
+                    if (gameState.currentStation < gameData.stations.length) {
+                        renderStation();
+                    } else {
+                        startBoosterRound();
+                    }
+                }, 1500);
+
+            } else {
+                feedbackEl.textContent = gameState.lang === 'en' ? 'Incorrect. Check your calculations.' : 'Fel. Kontrollera dina beräkningar.';
+                feedbackEl.classList.add('text-red-400', 'wrong-answer');
+            }
+        }
+        
+        function startBoosterRound() {
+            clearInterval(gameState.timerInterval);
+            showScreen('booster');
+            gameState.boosterTimer = 60;
+            gameState.boosterScore = 0;
+            document.getElementById('booster-timer').textContent = gameState.boosterTimer;
+            document.getElementById('booster-score').textContent = gameState.boosterScore;
+            
+            // Shuffle questions
+            gameData.boosterQuestions.sort(() => Math.random() - 0.5);
+            gameState.currentBoosterQ = 0;
+            renderBoosterQuestion();
+
+            gameState.boosterInterval = setInterval(() => {
+                gameState.boosterTimer--;
+                document.getElementById('booster-timer').textContent = gameState.boosterTimer;
+                if (gameState.boosterTimer <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function renderBoosterQuestion() {
+            if (gameState.currentBoosterQ >= gameData.boosterQuestions.length) {
+                gameState.currentBoosterQ = 0; // Loop if they are too fast
+            }
+            const question = gameData.boosterQuestions[gameState.currentBoosterQ];
+            document.getElementById('booster-definition').textContent = question[gameState.lang];
+            boosterInput.value = '';
+            boosterInput.focus();
+        }
+
+        function checkBoosterAnswer(isSkip = false) {
+             if (isSkip) {
+                gameState.boosterScore -= 5;
+            } else {
+                const userAnswer = boosterInput.value.trim().toLowerCase();
+                const correctAnswers = gameData.boosterQuestions[gameState.currentBoosterQ].a;
+                if (correctAnswers.includes(userAnswer)) {
+                    gameState.boosterScore += 10;
+                }
+            }
+            document.getElementById('booster-score').textContent = gameState.boosterScore;
+            gameState.currentBoosterQ++;
+            renderBoosterQuestion();
+        }
+
+        function endGame() {
+            clearInterval(gameState.boosterInterval);
+            showScreen('end');
+            
+            const elapsedSeconds = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const timeString = formatTime(elapsedSeconds);
+
+            document.getElementById('final-team-name').textContent = gameState.teamName;
+            document.getElementById('final-mission').textContent = gameState.missionVariant.charAt(0).toUpperCase() + gameState.missionVariant.slice(1);
+            document.getElementById('final-time').textContent = timeString;
+            document.getElementById('final-booster-score').textContent = gameState.boosterScore;
+            
+            const results = {
+                teamName: gameState.teamName,
+                missionVariant: gameState.missionVariant,
+                timeElapsed: timeString,
+                answers: gameState.answers,
+                launchCodeCorrect: true, // They can only reach this screen if correct
+                boosterScore: gameState.boosterScore,
+            };
+
+            const resultsString = JSON.stringify(results);
+            const encodedResults = btoa(resultsString);
+            document.getElementById('results-code').value = encodedResults;
+        }
+
+
+        // --- EVENT LISTENERS ---
+        startBtn.addEventListener('click', startGame);
+        submitBtn.addEventListener('click', checkAnswer);
+        hintBtn.addEventListener('click', () => {
+            document.getElementById('hint-box').classList.toggle('hidden');
+        });
+        
+        boosterSubmitBtn.addEventListener('click', () => checkBoosterAnswer());
+        boosterInput.addEventListener('keyup', (e) => {
+             if (e.key === 'Enter') checkBoosterAnswer();
+        });
+        skipBtn.addEventListener('click', () => checkBoosterAnswer(true));
+
+        copyBtn.addEventListener('click', () => {
+            const resultsCode = document.getElementById('results-code');
+            resultsCode.select();
+            document.execCommand('copy');
+            copyBtn.textContent = gameState.lang === 'en' ? 'Copied!' : 'Kopierad!';
+            setTimeout(() => {
+                copyBtn.textContent = gameState.lang === 'en' ? 'Copy' : 'Kopiera';
+            }, 1500);
+        });
+
+        // --- INITIALIZATION ---
+        updateUIText();
+        showScreen('start');
+
+    </script>
+</body>
+</html>
