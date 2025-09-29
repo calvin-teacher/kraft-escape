@@ -81,8 +81,9 @@
                     <label for="mission-variant" class="block mb-2 font-bold" data-en="Select Mission Variant" data-sv="Välj Uppdragsvariant">Select Mission Variant</label>
                     <select id="mission-variant" class="input-field">
                         <option value="alpha">Alpha</option>
-                        <option value="beta">Beta</option>
+                        <option value="beta">Delta</option>
                         <option value="gamma">Gamma</option>
+                        <option value="beta">Sigma</option>
                     </select>
                 </div>
                 <button id="start-btn" class="btn btn-primary w-full text-xl" data-en="Begin Mission" data-sv="Påbörja Uppdrag">Begin Mission</button>
@@ -219,7 +220,38 @@
                 { en: "The speed in a given direction.", sv: "Hastigheten i en viss riktning.", a: ["velocity", "hastighet"] },
                 { en: "The rate of change of velocity.", sv: "Förändringstakten för hastighet.", a: ["acceleration", "acceleration"] },
                 { en: "The energy transferred when a force moves an object.", sv: "Energin som överförs när en kraft flyttar ett föremål.", a: ["work", "arbete"] },
-                { en: "The force exerted per unit area.", sv: "Kraften som utövas per ytenhet.", a: ["pressure", "tryck"] }
+                { en: "The force exerted per unit area.", sv: "Kraften som utövas per ytenhet.", a: ["pressure", "tryck"] },
+// New Booster Questions to add to your gameData.boosterQuestions array
+
+{ en: "The SI unit of pressure.", sv: "SI-enheten för tryck.", a: ["pascal", "pa"] },
+{ en: "A unit of pressure equal to one hundred pascals.", sv: "En tryckenhet som är lika med hundra pascal.", a: ["hectopascal", "hpa", "hektopascal"] },
+{ en: "The mass per unit volume of a substance.", sv: "Massan per volymenhet av ett ämne.", a: ["density", "densitet"] },
+{ en: "A principle stating that the buoyant force on a submerged object is equal to the weight of the fluid displaced by the object.", sv: "En princip som säger att den uppåtriktade kraften på ett nedsänkt föremål är lika med vikten av den vätska som föremålet tränger undan.", a: ["archimedes' principle", "arkimedes princip"] },
+{ en: "The upward force exerted by a fluid that opposes the weight of an immersed object.", sv: "Den uppåtriktade kraft som utövas av en vätska och som motverkar vikten av ett nedsänkt föremål.", a: ["buoyancy", "buoyant force", "lyftkraft"] },
+{ en: "Two or more containers that are connected below the liquid level, allowing the liquid to find its own level in all containers.", sv: "Två eller flera behållare som är anslutna under vätskenivån, vilket gör att vätskan hittar sin egen nivå i alla behållare.", a: ["communicating vessels", "kommunicerande kärl"] },
+{ en: "The layer of gases surrounding a planet or other celestial body.", sv: "Lagret av gaser som omger en planet eller annan himlakropp.", a: ["atmosphere", "atmosfär"] },
+{ en: "The pressure exerted by the weight of the atmosphere.", sv: "Trycket som utövas av atmosfärens vikt.", a: ["air pressure", "lufttryck"] },
+{ en: "An instrument used to measure atmospheric pressure.", sv: "Ett instrument som används för att mäta atmosfärstryck.", a: ["barometer", "barometer"] },
+{ en: "Pressure that is greater than the surrounding atmospheric pressure.", sv: "Tryck som är högre än det omgivande atmosfärstrycket.", a: ["overpressure", "övertryck"] },
+{ en: "Pressure that is lower than the surrounding atmospheric pressure.", sv: "Tryck som är lägre än det omgivande atmosfärstrycket.", a: ["underpressure", "undertryck"] },
+{ en: "A space entirely devoid of matter, or a space from which air has been almost entirely removed.", sv: "Ett utrymme helt utan materia, eller ett utrymme från vilket luft nästan helt har avlägsnats.", a: ["vacuum", "vakuum"] },
+{ en: "Motion at a constant velocity (constant speed in a straight line).", sv: "Rörelse med konstant hastighet (konstant fart i en rak linje).", a: ["uniform motion", "likformig rörelse"] },
+{ en: "Motion in which the velocity is changing (speeding up, slowing down, or changing direction).", sv: "Rörelse där hastigheten ändras (ökande, minskande eller ändrad riktning).", a: ["accelerated motion", "accelererad rörelse"] },
+{ en: "Motion in which an object's speed is decreasing.", sv: "Rörelse där ett objekts hastighet minskar.", a: ["decelerated motion", "retarderad rörelse"] },
+{ en: "The total distance traveled divided by the total time taken.", sv: "Den totala sträckan dividerad med den totala tiden.", a: ["average speed", "average velocity", "medelhastighet"] },
+{ en: "The gravitational force exerted on an object by a celestial body.", sv: "Tyngdkraften som utövas på ett föremål av en himlakropp.", a: ["weight", "tyngd"] }, // Already in list but good to have a specific def.
+{ en: "The imaginary point in an object where the entire weight appears to act.", sv: "Den tänkta punkten i ett föremål där hela vikten verkar verka.", a: ["center of gravity", "tyngdpunkt"] },
+{ en: "The attractive force between any two objects with mass.", sv: "Den attraherande kraften mellan två objekt med massa.", a: ["gravitational force", "gravitationskraft"] },
+{ en: "An instrument used to measure force or weight.", sv: "Ett instrument som används för att mäta kraft eller tyngd.", a: ["dynamometer", "dynamometer"] },
+{ en: "A line passing through the center of gravity and pointing towards the center of the Earth (or other celestial body).", sv: "En linje som går genom tyngdpunkten och pekar mot jordens (eller annan himlakropps) centrum.", a: ["plumb line", "lodlinje"] },
+{ en: "The motion of an object solely under the influence of gravity, ignoring air resistance.", sv: "Rörelsen av ett föremål enbart under påverkan av gravitationen, utan att ta hänsyn till luftmotstånd.", a: ["free fall", "fritt fall"] },
+{ en: "An artificial body placed in orbit around the Earth or another planet to collect information or for communication.", sv: "En konstgjord kropp placerad i omloppsbana runt jorden eller en annan planet för att samla information eller för kommunikation.", a: ["satellite", "satellit"] },
+{ en: "The force that acts on a body moving in a circular path and is directed toward the center around which the body is moving.", sv: "Kraften som verkar på en kropp som rör sig i en cirkulär bana och är riktad mot mitten kring vilken kroppen rör sig.", a: ["centripetal force", "centripetalkraft"] },
+{ en: "The apparent outward force on a mass when it is rotating in a circular path.", sv: "Den skenbara utåtriktade kraften på en massa när den roterar i en cirkulär bana.", a: ["centrifugal force", "centrifugalkraft"] }
+
+            
+            
+            
             ]
         };
 
@@ -233,7 +265,7 @@
             timerInterval: null,
             answers: [],
             boosterScore: 0,
-            boosterTimer: 60,
+            boosterTimer: 120,
             boosterInterval: null,
             currentBoosterQ: 0
         };
@@ -384,7 +416,7 @@
         function startBoosterRound() {
             clearInterval(gameState.timerInterval);
             showScreen('booster');
-            gameState.boosterTimer = 60;
+            gameState.boosterTimer = 120;
             gameState.boosterScore = 0;
             document.getElementById('booster-timer').textContent = gameState.boosterTimer;
             document.getElementById('booster-score').textContent = gameState.boosterScore;
